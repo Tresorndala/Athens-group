@@ -1,0 +1,244 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('sign\ up\ login\ background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    width: 420px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid white;
+    backdrop-filter: blur(0.3px);
+    color: white;
+    min-height: 300px;
+    border-radius: 15px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.container h1 {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container p {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.input-space {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-space input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 0.1px solid white;
+    border-radius: 40px;
+    color: white;
+    font-size: 20px;
+    padding: 10px 20px;
+}
+
+.input-space input::placeholder {
+    color: white;
+}
+
+.input-space i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    margin: -14.5px 0 24.5px; 
+}
+
+.remember-forgot label input {
+    accent-color: white;
+    margin-right: 4px;
+}
+
+.remember-forgot a {
+    color: rgb(229, 172, 172);
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login-button {
+    width: 100%;
+    height: 46px;
+    background: #426558; 
+    border: none;
+    outline: none;
+    border-radius: 39px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    cursor: pointer;
+    font-size: 15px;
+    color: white; 
+    font-weight: 600;
+    margin-top: 20px; 
+}
+
+.login-button:hover {
+    background: #5c6bc0; 
+}
+
+.register {
+    font-size: 15px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.register p a {
+    color: white;
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.register p a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background: #009688;
+    color: #fff;
+    text-align: center;
+    padding: 1em;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 2em;
+    max-width: 800px;
+    margin: auto;
+}
+
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1em;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.report-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+}
+
+.report-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 1em;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#progress input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+    margin-top: 10px;
+}
+
+#progress button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #009688;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+#progress button:hover {
+    background-color: #00796b;
+}
+main {
+    padding: 2em;
+    max-width: 600px;
+    margin: auto;
+    text-align: left;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    background: #f5f5f5;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+input[type="text"],
+input[type="file"],
+textarea {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #009688;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+button[type="submit"]:hover {
+    background-color: #00796b;
+}
