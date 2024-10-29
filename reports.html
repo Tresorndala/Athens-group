@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recent Reports - CampusFixIt</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reports.css">
+   
 </head>
 <body>
     <header>
@@ -13,16 +14,49 @@
     <main>
         <div class="report-grid">
             <div class="report-card">
+                <span class="report-id">#FIX-2024-001</span>
                 <h3>Leaky Faucet in Building A</h3>
-                <p>Location: Main Bathroom, Building A</p>
-                <p>Status: In Progress</p>
+                <div class="report-details">
+                    <div class="detail-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Main Bathroom, Building A</span>
+                    </div>
+                    <div class="detail-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>Reported: 2 hours ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="status-badge status-progress">In Progress</span>
+                    </div>
+                </div>
             </div>
             <div class="report-card">
+                <span class="report-id">#FIX-2024-002</span>
                 <h3>Broken Projector in Lecture Hall</h3>
-                <p>Location: Room 101, Building B</p>
-                <p>Status: Pending</p>
+                <div class="report-details">
+                    <div class="detail-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Room 101, Building B</span>
+                    </div>
+                    <div class="detail-item">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>Reported: 5 hours ago</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="status-badge status-pending">Pending</span>
+                    </div>
+                </div>
             </div>
-            <!-- Additional report cards can be added here -->
         </div>
     </main>
     <footer>
