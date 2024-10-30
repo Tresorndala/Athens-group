@@ -23,9 +23,13 @@ Features
 
 
 User-friendly Interface for submitting issues with detailed descriptions and photos
+
 Issue Categorization for faster identification and prioritization
-Real-time Request Tracking and status updates
+
+Request Tracking and status updates
+
 Notification System to inform users of progress and completion
+
 Admin Dashboard for facility teams to manage and prioritize incoming requests
 
 
