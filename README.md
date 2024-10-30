@@ -23,7 +23,11 @@ Admin Dashboard for facility teams to manage and prioritize incoming requests
 
 
 Tech Stack
+
 Backend: PHP, MySQL for database management
+
 Frontend: HTML, CSS, JavaScript
+
 Real-time Notifications: WebSockets/Email integration
+
 Image Upload: Support for uploading images along with requests.
