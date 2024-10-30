@@ -32,6 +32,7 @@ CREATE TABLE `MaintenanceRequest` (
     `description` TEXT NOT NULL,
     `submissionDate` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `completionDate` DATE,
+    `imageURL` VARCHAR(255),  -- Stores the path/URL to the image
     FOREIGN KEY (`userID`) REFERENCES `User`(`userID`) ON DELETE SET NULL,
     FOREIGN KEY (`maintenanceTypeID`) REFERENCES `MaintenanceType`(`maintenanceTypeID`),
     FOREIGN KEY (`statusID`) REFERENCES `Status`(`statusID`)
@@ -58,6 +59,6 @@ INSERT INTO `User` (`userName`, `userContact`, `userEmail`) VALUES
     ('Jane Smith', '987654321', 'janesmith@example.com');
 
 -- Sample data for MaintenanceRequest table
-INSERT INTO `MaintenanceRequest` (`userID`, `maintenanceTypeID`, `statusID`, `description`) VALUES 
-    (1, 1, 1, 'Flickering lights in the main hallway'),
-    (2, 2, 2, 'Leaking pipe in the restroom');
+INSERT INTO `MaintenanceRequest` (`userID`, `maintenanceTypeID`, `statusID`, `description`, `imageURL`) VALUES 
+    (1, 1, 1, 'Flickering lights in the main hallway', 'images/flickering_lights.jpg'),
+    (2, 2, 2, 'Leaking pipe in the restroom', 'images/leaking_pipe.jpg');
