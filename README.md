@@ -10,8 +10,12 @@ Proposed Solution
 The Campus reporting Service  System is a web-based platform designed to streamline the process of reporting and resolving maintenance issues on campus. The system empowers students and staff to:
 
 Submit Maintenance Requests: Users can provide detailed descriptions and images of any problem they encounter.
-Real-time Status Tracking: Track the progress of their maintenance requests and stay updated on the resolution status.
+
+Status Tracking: Track the progress of their maintenance requests and stay updated on the resolution status.
+
 Notifications: Receive automatic notifications when their issue is resolved or if further action is required.
+
+
 By improving communication between the campus community and the facilities management team, this system ensures that maintenance issues are addressed quickly and efficiently, enhancing the overall campus experience.
 
 Features
