@@ -4,8 +4,7 @@ view website: Link for our CMS website(https://dengdavidakuoch.wixsite.com/athen
 
 
 
-Problem
-On many campuses, students and staff often face challenges when reporting maintenance issues such as broken equipment, faulty lights, or plumbing problems. These issues may go unresolved for extended periods due to ineffective communication channels and poor tracking systems. This can lead to dissatisfaction and can negatively impact the learning and working environment.
+There is a big Problem in many campuses in general and  Ashesi campus in particular, students and staff often face challenges when reporting maintenance issues such as broken equipment, faulty lights, or plumbing problems. These issues may go unresolved for extended periods due to ineffective communication channels and poor tracking systems. This can lead to dissatisfaction and can negatively impact the learning and working environment.
 
 Proposed Solution
 The Campus reporting Service  System is a web-based platform designed to streamline the process of reporting and resolving maintenance issues on campus. The system empowers students and staff to:
