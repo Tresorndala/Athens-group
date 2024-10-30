@@ -18,7 +18,10 @@ Notifications: Receive automatic notifications when their issue is resolved or i
 
 By improving communication between the campus community and the facilities management team, this system ensures that maintenance issues are addressed quickly and efficiently, enhancing the overall campus experience.
 
+
 Features
+
+
 User-friendly Interface for submitting issues with detailed descriptions and photos
 Issue Categorization for faster identification and prioritization
 Real-time Request Tracking and status updates
