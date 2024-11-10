@@ -23,7 +23,7 @@
             <h1>Welcome to CampusFixIt</h1>
             <p>Report and track campus maintenance issues with ease</p>
             <div>
-                <a href="submit-report.php"><button type="button"><span></span>Submit a Report</button></a>
+                <a href="submitreport_action.php"><button type="button"><span></span>Submit a Report</button></a>
                 <a href="signup.html"><button type="button"><span></span>Sign Up</button></a>
             </div>
         </div>

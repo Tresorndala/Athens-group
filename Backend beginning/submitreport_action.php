@@ -1,8 +1,13 @@
 <?php
-// submitreport_action.php
-
-// Include the config file to establish the DB connection
+// Include core functions and start session
+include 'core.php';
 include 'config.php';
+
+// Check if the user is logged in
+isLogin(); // This will redirect to login.php if the user is not logged in
+
+// If logged in, proceed with displaying the report submission form
+?>
 
 // Check if the form was submitted using POST method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
