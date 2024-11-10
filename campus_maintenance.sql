@@ -13,7 +13,11 @@ CREATE TABLE `User` (
     `userName` VARCHAR(255) NOT NULL,
     `userContact` VARCHAR(20),
     `userEmail` VARCHAR(255) UNIQUE NOT NULL, -- Email is unique
+<<<<<<< HEAD
     `userPass` VARCHAR(255) NOT NULL, -- Password for user authentication
+=======
+    `userpassword` VARCHAR(255) NOT NULL, -- Renamed from userPass to userpassword
+>>>>>>> 919fe23 (Your commit message here)
     `userRole` ENUM('Regular', 'Admin') DEFAULT 'Regular' -- Role to distinguish between regular users and admin
 );
 
@@ -61,7 +65,11 @@ INSERT INTO `Status` (`statusName`) VALUES
     ('Cancelled');
 
 -- Sample data for the User table (Admin and Regular users)
+<<<<<<< HEAD
 INSERT INTO `User` (`userName`, `userContact`, `userEmail`, `userPass`, `userRole`) VALUES 
+=======
+INSERT INTO `User` (`userName`, `userContact`, `userEmail`, `userpassword`, `userRole`) VALUES 
+>>>>>>> 919fe23 (Your commit message here)
     ('John Doe', '123456789', 'johndoe@example.com', 'hashed_password_1', 'Admin'), -- Admin
     ('Jane Smith', '987654321', 'janesmith@example.com', 'hashed_password_2', 'Regular'); -- Regular user
 
