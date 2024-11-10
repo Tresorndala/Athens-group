@@ -4,7 +4,7 @@ include 'core.php';
 include 'config.php';
 
 // Check if the user is logged in
-isLogin(); // This will redirect to login.php if the user is not logged in
+#isLogin(); // This will redirect to login.php if the user is not logged in
 
 // If logged in, proceed with displaying the report submission form
 ?>
