@@ -13,7 +13,7 @@
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="reports.php">Recent Reports</a></li>
-                <li><a href="about.php">About</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="progress.php">Track Report Progress</a></li>
                 <li><a href="login.php">Login</a></li>
             </ul>
@@ -23,8 +23,9 @@
             <h1>Welcome to CampusFixIt</h1>
             <p>Report and track campus maintenance issues with ease</p>
             <div>
-                <a href="submitreport_action.php"><button type="button"><span></span>Submit a Report</button></a>
-                <a href="signup.html"><button type="button"><span></span>Sign Up</button></a>
+                <!-- The "Submit a Report" button always redirects to login.php -->
+                <a href="login.php"><button type="button">Submit a Report</button></a>
+                <a href="signup.html"><button type="button">Sign Up</button></a>
             </div>
         </div>
     </div>
