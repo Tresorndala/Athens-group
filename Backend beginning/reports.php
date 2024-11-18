@@ -1,20 +1,7 @@
 <?php
-// reports.php
-
-// Include the config file to establish the DB connection
-include 'config.php';
-
-// Include the core file for login check functionality
-include 'core.php';
-
-// Call isLogin() to check login status
-#isLogin();
-
-// Fetch reports from the database
-$query = "SELECT * FROM report ORDER BY reportID";
-$result = $conn->query($query);
+// Include the backend logic for fetching reports
+include 'report_action.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,25 +14,36 @@ $result = $conn->query($query);
     <header>
         <h1>Recent Maintenance Reports</h1>
     </header>
+
     <main>
         <div class="report-grid">
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="report-card">
-                    <span class="report-id">#FIX-<?php echo $row['report_id']; ?></span>
-                    <h3><?php echo $row['description']; ?></h3>
-                    <div class="report-details">
-                        <div class="detail-item">
-                            <span>Location: <?php echo $row['location']; ?></span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Reported: <?php echo $row['date_reported']; ?></span>
-                        </div>
-                        <div class="detail-item">
-                            <a href="progress.php?id=<?php echo $row['report_id']; ?>" class="status-badge">Track Progress</a>
+            <?php
+            // Fetch the recent reports from the database
+            $reports = getReports($conn);
+            if (count($reports) > 0):
+                foreach ($reports as $report): ?>
+                    <div class="report-card">
+                        <span class="report-id">#FIX-<?php echo $report['report_id']; ?></span>
+                        <h3><?php echo htmlspecialchars($report['description']); ?></h3>
+                        <div class="report-details">
+                            <div class="detail-item">
+                                <span>Location: <?php echo htmlspecialchars($report['location']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Reported: <?php echo htmlspecialchars($report['date_reported']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Status: <?php echo htmlspecialchars($report['statusName']); ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <a href="progress.php?id=<?php echo $report['report_id']; ?>" class="status-badge">Track Progress</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
+                <?php endforeach;
+            else: ?>
+                <p>No reports found.</p>
+            <?php endif; ?>
         </div>
     </main>
 
@@ -54,4 +52,7 @@ $result = $conn->query($query);
     </footer>
 </body>
 </html>
+
+
+
 
