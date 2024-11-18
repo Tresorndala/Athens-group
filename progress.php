@@ -8,14 +8,25 @@
 </head>
 <body>
     <header>
-        <h1>Track Report Progress</h1>
+        <nav class="navbar">
+            <h1 class="logo">CampusFixIt</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="submit-report.html">Submit Report</a></li>
+                <li><a href="progress.html">Track Report</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
     </header>
+    
     <main>
+        <h2>Track Report Progress</h2>
         <p>Enter your report ID below to check the current status of your report.</p>
         <input type="text" id="reportId" placeholder="Enter Report ID">
         <button onclick="trackReport()">Check Status</button>
         <p id="reportStatus" style="margin-top: 20px;"></p>
     </main>
+    
     <footer>
         <p>&copy; 2024 CampusFixIt</p>
     </footer>
@@ -25,7 +36,6 @@
             const reportId = document.getElementById('reportId').value;
             const reportStatus = document.getElementById('reportStatus');
 
-            // Placeholder logic for tracking (can be replaced with real backend data)
             if (reportId === "123") {
                 reportStatus.innerText = "Status: In Progress";
             } else if (reportId === "456") {

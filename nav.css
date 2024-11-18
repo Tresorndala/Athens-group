@@ -1,0 +1,50 @@
+/* CSS Code with Adjustments */
+
+.navbar {
+    width: 100%;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distributes space between the logo and nav links */
+    padding: 1rem 2rem;
+    position: fixed; /* Keeps the navbar at the top of the page */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensures it stays on top */
+}
+
+.logo {
+    width: 60px;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: 2rem;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-links a::after {
+    content: '';
+    height: 3px;
+    width: 0;
+    background: #fff;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transition: 0.5s;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}

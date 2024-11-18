@@ -10,13 +10,12 @@
     <div class="banner">
         <div class="navbar">
             <img src="logo.jpg" alt="CampusFixIt Logo" class="logo">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="reports.html">Recent Reports</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="progress.html">Track Report Progress</a></li>
-                <li><a href="login.html">Login</a></li>
-            </ul>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="progress.html">Track Report Progress</a>
+                <a href="login.html">Login</a>
+            </nav>
         </div>
 
         <div class="content">

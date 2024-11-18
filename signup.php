@@ -8,6 +8,18 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="nav-logo">
+            <a href="#">CampusFixIt</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </div>
+
+    <!-- Sign Up Form -->
     <div class="container">
         <h1>Sign Up</h1>
         <form action="/signup" method="POST">
@@ -33,5 +45,6 @@
             <p>Already have an account? <a href="login.html">Login</a></p>
         </div>
     </div>
+    <script src="signup.js"></script>
 </body>
 </html>

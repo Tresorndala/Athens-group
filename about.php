@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About CampusFixIt</title>
-    
-    
+    <link rel="stylesheet" href="nav.css">
     <link rel="stylesheet" href="about.css">
-   
-    
 </head>
 <body>
+    <div w3-include-html="nav.html"></div>
     <div class="container">
         <div class="hero-section">
             <div class="floating-elements">
@@ -32,7 +30,31 @@
         </div>
     </div>
 
+    <script>
+        function includeHTML() {
+            var z, i, elmnt, file, xhttp;
+            z = document.getElementsByTagName("*");
+            for (i = 0; i < z.length; i++) {
+                elmnt = z[i];
+                file = elmnt.getAttribute("w3-include-html");
+                if (file) {
+                    xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {elmnt.innerHTML = this.responseText;}
+                            if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+                            elmnt.removeAttribute("w3-include-html");
+                            includeHTML();
+                        }
+                    }
+                    xhttp.open("GET", file, true);
+                    xhttp.send();
+                    return;
+                }
+            }
+        }
+        includeHTML();
+    </script>
     <script src="about.js"></script>
-    
 </body>
 </html>

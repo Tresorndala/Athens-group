@@ -109,6 +109,51 @@
     animation-delay: -8s;
   }
 
+  .navbar {
+    width: 100%;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem 2rem;
+  }
+  
+  .logo {
+    margin-right: auto;
+    width: 60px;
+    cursor: pointer;
+  }
+  
+  .nav-links {
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: 2rem;
+    position: relative;
+    padding: 0.5rem 0;
+  }
+  
+  .nav-links a::after {
+    content: '';
+    height: 3px;
+    width: 0;
+    background: #fff;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transition: 0.5s;
+  }
+  
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
   @keyframes float {
     0%, 100% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(15px, -15px) rotate(3deg); }
