@@ -1,79 +1,112 @@
 <?php
-// Include the database configuration file to connect to the database
+// Include required files
 include 'config.php';
+require_once 'user_signup_email.php';
 
-// Enable error reporting to display errors for debugging
+// Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Check if the form was submitted using the POST method
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Start session for messages
+session_start();
 
-    // Collect and trim form data, using null coalescing to avoid undefined index errors
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Collect and sanitize form data
     $full_name = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $contact = trim($_POST['contact'] ?? ''); // Ensure 'contact' is set
+    $contact = trim($_POST['contact'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm_password = trim($_POST['confirm_password'] ?? '');
 
-    // Check if any required fields are empty
+    // Validate required fields
     if (empty($full_name) || empty($email) || empty($contact) || empty($password) || empty($confirm_password)) {
-        die('Please fill in all required fields.'); // Stop execution if any field is empty
+        $_SESSION['error'] = 'Please fill in all required fields.';
+        header('Location: register.html');
+        exit;
     }
 
-    // Check if password and confirm password match
-    if ($password != $confirm_password) {
-        die('Passwords do not match.'); // Stop execution if passwords do not match
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = 'Invalid email format';
+        header('Location: register.html');
+        exit;
     }
 
-    // Check if the database connection is successful
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    // Validate password match
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = 'Passwords do not match.';
+        header('Location: register.html');
+        exit;
     }
 
-    // Check if the 'User' table exists in the database
-    $result = $conn->query("SHOW TABLES LIKE 'User'");
-    if ($result->num_rows == 0) {
-        die('The table "User" does not exist in the database.');
-    }
+    try {
+        // Check if email already exists
+        $stmt = $conn->prepare('SELECT userEmail FROM User WHERE userEmail = ?');
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Prepare a statement to check if the email is already registered in the database
-    $stmt = $conn->prepare('SELECT userEmail FROM User WHERE userEmail = ?');
-    $stmt->bind_param('s', $email); // Bind the email parameter to the query
-    $stmt->execute(); // Execute the query
-    $results = $stmt->get_result(); // Get the result of the query
-
-    // Check if the email already exists in the database
-    if ($results->num_rows > 0) {
-        echo '<script>alert("User already registered.");</script>';
-        echo '<script>window.location.href = "register.html";</script>';
-    } else {
-        // Hash the password for security before storing it in the database
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-        // Set the default user role to 'Regular'
-        $user_role = 'Regular'; // Default role for new users
-
-        // Prepare an INSERT statement to add the new user to the database
-        $query = 'INSERT INTO User (userName, userEmail, userContact, userPassword, userRole) VALUES (?, ?, ?, ?, ?)';
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('sssss', $full_name, $email, $contact, $hashed_password, $user_role);
-
-        // Execute the statement and check if it was successful
-        if ($stmt->execute()) {
-            header('Location: Login.php'); // Redirect to the login page if successful
-        } else {
-            echo '<script>alert("Registration failed. Please try again.");</script>';
-            echo '<script>window.location.href = "register.html";</script>';
+        if ($result->num_rows > 0) {
+            $_SESSION['error'] = 'User already registered.';
+            header('Location: register.html');
+            exit;
         }
+
+        // Hash password
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        
+        // Set default user role
+        $user_role = 'Regular';
+
+        // Initialize email manager
+        $emailManager = new SignupEmailManager('your-system-email@example.com');
+        
+        // Send welcome email and get user ID
+        $emailResult = $emailManager->sendWelcomeEmail($email, $full_name);
+
+        if ($emailResult['success']) {
+            // If email was sent successfully, proceed with user registration
+            $query = 'INSERT INTO User (userName, userEmail, userContact, userPassword, userRole, unique_id) 
+                     VALUES (?, ?, ?, ?, ?, ?)';
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param('sssssi', $full_name, $email, $contact, $hashed_password, $user_role, $emailResult['userId']);
+
+            if ($stmt->execute()) {
+                // Log successful registration
+                error_log("New user registration: {$email} with ID: {$emailResult['userId']}");
+                
+                $_SESSION['success'] = 'Registration successful! Please check your email.';
+                header('Location: Login.php');
+                exit;
+            } else {
+                throw new Exception('Database insertion failed');
+            }
+        } else {
+            // If email sending failed but we still want to register the user
+            $query = 'INSERT INTO User (userName, userEmail, userContact, userPassword, userRole) 
+                     VALUES (?, ?, ?, ?, ?)';
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param('sssss', $full_name, $email, $contact, $hashed_password, $user_role);
+
+            if ($stmt->execute()) {
+                $_SESSION['warning'] = 'Account created but welcome email could not be sent.';
+                error_log("Email sending failed for {$email}: " . $emailResult['error']);
+                header('Location: Login.php');
+                exit;
+            } else {
+                throw new Exception('Database insertion failed');
+            }
+        }
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Registration failed. Please try again.';
+        error_log("Registration error: " . $e->getMessage());
+        header('Location: register.html');
+        exit;
+    } finally {
+        if (isset($stmt)) {
+            $stmt->close();
+        }
+        $conn->close();
     }
-
-    // Close the statement after execution
-    $stmt->close();
 }
-
-// Close the database connection at the end
-$conn->close();
-?>
-
-?>
+//Yenma Is doing the email thing
