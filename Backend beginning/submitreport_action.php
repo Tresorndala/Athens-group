@@ -1,70 +1,77 @@
 <?php
-// Include core functions and start session
-include 'core.php';
+// Include the database configuration file
 include 'config.php';
 
-// Check if the user is logged in
-isLogin(); // This will redirect to login.php if the user is not logged in
+// Set Content-Type header for better response clarity
+header('Content-Type: application/json');
 
-// If logged in, proceed with displaying the report submission form
-?>
+// Check if the request method is POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize and validate the inputs
+    $userName = htmlspecialchars(trim($_POST['userName']));
+    $userEmail = filter_var(trim($_POST['userEmail']), FILTER_SANITIZE_EMAIL);
+    $maintenanceTypeID = intval($_POST['maintenanceType']);
+    $location = htmlspecialchars(trim($_POST['location']));
+    $description = htmlspecialchars(trim($_POST['description']));
 
-// Check if the form was submitted using POST method
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ensure the file was uploaded
-    if (isset($_FILES['reportImage']) && $_FILES['reportImage']['error'] == 0) {
-        $uploadDir = 'uploads/';
-        $uploadFile = $uploadDir . basename($_FILES['reportImage']['name']);
+    // Generate a unique Report ID if not provided
+    $reportID = empty($_POST['reportID']) ? uniqid('report_') : $_POST['reportID'];
 
-        // Attempt to move the uploaded file to the target directory
-        if (move_uploaded_file($_FILES['reportImage']['tmp_name'], $uploadFile)) {
-            // Get the form data
-            $userName = $_POST['userName'];  // User's name
-            $userEmail = $_POST['userEmail'];  // User's email
-            $maintenanceTypeID = $_POST['maintenanceType'];  // Selected maintenance type
-            $description = $_POST['description'];  // Description of the issue
-            $imagePath = $uploadFile;  // Path to the uploaded image
+    // Ensure all fields are filled out
+    if (empty($userName) || empty($userEmail) || empty($maintenanceTypeID) || empty($location) || empty($description)) {
+        echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+        exit;
+    }
 
-            // Check if the user already exists in the database using email
-            $checkUserQuery = "SELECT userID FROM User WHERE userEmail = '$userEmail'";
-            $result = $conn->query($checkUserQuery);
+    // Validate email format
+    if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid email address.']);
+        exit;
+    }
 
-            // If the user exists, fetch the userID
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $userID = $row['userID'];
-            } else {
-                // If the user doesn't exist, insert the user into the database
-                $insertUserQuery = "INSERT INTO User (userName, userEmail) VALUES ('$userName', '$userEmail')";
-                if ($conn->query($insertUserQuery) === TRUE) {
-                    // After inserting the user, get their userID
-                    $userID = $conn->insert_id;
-                } else {
-                    echo "Error inserting new user: " . $conn->error;
-                    exit();
-                }
-            }
+    // Check if the user exists
+    $stmt = $conn->prepare('SELECT userID FROM User WHERE userEmail = ?');
+    $stmt->bind_param('s', $userEmail);
+    $stmt->execute();
+    $stmt->store_result();
 
-            // Set the status to 'Pending' (statusID = 1)
-            $statusID = 1;
-
-            // Insert the maintenance report into the database
-            $query = "INSERT INTO report (userID, maintenanceTypeID, statusID, description, image_path, submissionDate) 
-                      VALUES ('$userID', '$maintenanceTypeID', '$statusID', '$description', '$imagePath', NOW())";
-
-            // Execute the query and check for success
-            if ($conn->query($query) === TRUE) {
-                // Redirect to a page confirming the report submission
-                header('Location: submitted_report.php');
-                exit();
-            } else {
-                echo "Error: " . $conn->error;
-            }
-        } else {
-            echo "Error uploading file.";
-        }
+    // If the user exists, fetch the userID
+    if ($stmt->num_rows > 0) {
+        $stmt->bind_result($userID);
+        $stmt->fetch();
     } else {
-        echo "No file uploaded or file error occurred.";
+        // If the user doesn't exist, insert the user into the database
+        $stmt = $conn->prepare('INSERT INTO User (userName, userEmail) VALUES (?, ?)');
+        $stmt->bind_param('ss', $userName, $userEmail);
+        if ($stmt->execute()) {
+            // After inserting the user, get their userID
+            $userID = $stmt->insert_id;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error inserting user into the database.']);
+            exit;
+        }
+    }
+
+    // Set the status to 'Pending' (statusID = 1)
+    $statusID = 1;
+
+    // Insert the maintenance report into the database with the unique reportID
+    $stmt = $conn->prepare('INSERT INTO report (userID, maintenanceTypeID, statusID, description, location, submissionDate, reportID) VALUES (?, ?, ?, ?, ?, NOW(), ?)');
+    $stmt->bind_param('iiisss', $userID, $maintenanceTypeID, $statusID, $description, $location, $reportID);
+
+    // Execute the query and check for success
+    if ($stmt->execute()) {
+        // Respond with success and the unique Report ID
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Report submitted successfully.', 
+            'reportID' => $reportID,
+            'instructions' => 'You can track your report using this ID.'
+        ]);
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error submitting report.']);
+        exit;
     }
 }
 ?>
