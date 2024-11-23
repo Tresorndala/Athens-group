@@ -1,46 +1,75 @@
 <?php
+session_start();
 include "Functions_users_reports.php"; // Include the functions file
 include "core.php"; // Include the login check function (isLogin)
 isLogin(); // Check if the user is logged in
 
 // Handle form submissions for adding, updating, and deleting
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // For user operations
-    if (isset($_POST['addUser'])) {
-        $userName = $_POST['userName'];
-        $userEmail = $_POST['userEmail'];
-        $userPassword = $_POST['userPassword'];
-        $userRole = $_POST['userRole'];
-        addUser($userName, $userEmail, $userPassword, $userRole);
-    } elseif (isset($_POST['deleteUser'])) {
-        $userID = $_POST['deleteUser'];
-        deleteUser($userID);
-    } elseif (isset($_POST['updateUserRole'])) {
-        $userID = $_POST['updateUserRole'];
-        $newRole = $_POST['newRole'];
-        updateUserRole($userID, $newRole);
-    }
+    try {
+        // For user operations
+        if (isset($_POST['addUser'])) {
+            $userName = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_STRING);
+            $userEmail = filter_input(INPUT_POST, 'userEmail', FILTER_VALIDATE_EMAIL);
+            $userPassword = filter_input(INPUT_POST, 'userPassword', FILTER_SANITIZE_STRING);
+            $userRole = filter_input(INPUT_POST, 'userRole', FILTER_SANITIZE_STRING);
 
-    // For report operations
-    if (isset($_POST['addReport'])) {
-        $userID = $_POST['userID'];
-        $maintenanceTypeID = $_POST['maintenanceTypeID'];
-        $statusID = $_POST['statusID'];
-        $description = $_POST['description'];
-        $location = $_POST['location'];
-        addReport($userID, $maintenanceTypeID, $statusID, $description, $location);
-    } elseif (isset($_POST['deleteReport'])) {
-        $reportID = $_POST['deleteReport'];
-        deleteReport($reportID);
-    } elseif (isset($_POST['updateReportStatus'])) {
-        $reportID = $_POST['updateReportStatus'];
-        $newStatusID = $_POST['newStatusID'];
-        updateReportStatus($reportID, $newStatusID);
-    }
+            if ($userName && $userEmail && $userPassword && $userRole) {
+                addUser($userName, $userEmail, $userPassword, $userRole);
+                $_SESSION['message'] = "User added successfully.";
+                $_SESSION['message_type'] = "success";
+            } else {
+                throw new Exception("Invalid user data provided.");
+            }
+        } elseif (isset($_POST['deleteUser'])) {
+            $userID = filter_input(INPUT_POST, 'deleteUser', FILTER_VALIDATE_INT);
+            deleteUser($userID);
+            $_SESSION['message'] = "User deleted successfully.";
+            $_SESSION['message_type'] = "success";
+        } elseif (isset($_POST['updateUserRole'])) {
+            $userID = filter_input(INPUT_POST, 'updateUserRole', FILTER_VALIDATE_INT);
+            $newRole = filter_input(INPUT_POST, 'newRole', FILTER_SANITIZE_STRING);
+            updateUserRole($userID, $newRole);
+            $_SESSION['message'] = "User role updated successfully.";
+            $_SESSION['message_type'] = "success";
+        }
 
-    // Reload the page after form submission
-    header("Location: admin_landing.php");
-    exit;
+        // For report operations
+        if (isset($_POST['addReport'])) {
+            $userID = filter_input(INPUT_POST, 'userID', FILTER_VALIDATE_INT);
+            $maintenanceTypeID = filter_input(INPUT_POST, 'maintenanceTypeID', FILTER_VALIDATE_INT);
+            $statusID = filter_input(INPUT_POST, 'statusID', FILTER_VALIDATE_INT);
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
+            $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
+
+            if ($userID && $maintenanceTypeID && $statusID && $description && $location) {
+                addReport($userID, $maintenanceTypeID, $statusID, $description, $location);
+                $_SESSION['message'] = "Report added successfully.";
+                $_SESSION['message_type'] = "success";
+            } else {
+                throw new Exception("Invalid report data provided.");
+            }
+        } elseif (isset($_POST['deleteReport'])) {
+            $reportID = filter_input(INPUT_POST, 'deleteReport', FILTER_SANITIZE_STRING);
+            deleteReport($reportID);
+            $_SESSION['message'] = "Report deleted successfully.";
+            $_SESSION['message_type'] = "success";
+        } elseif (isset($_POST['updateReportStatus'])) {
+            $reportID = filter_input(INPUT_POST, 'updateReportStatus', FILTER_SANITIZE_STRING);
+            $newStatusID = filter_input(INPUT_POST, 'newStatusID', FILTER_VALIDATE_INT);
+            updateReportStatus($reportID, $newStatusID);
+            $_SESSION['message'] = "Report status updated successfully.";
+            $_SESSION['message_type'] = "success";
+        }
+
+        header("Location: admin_landing.php");
+        exit;
+    } catch (Exception $e) {
+        $_SESSION['message'] = $e->getMessage();
+        $_SESSION['message_type'] = "error";
+        header("Location: admin_landing.php");
+        exit;
+    }
 }
 
 ?>
@@ -52,11 +81,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/cb76afc7c2.js" crossorigin="anonymous"></script>
+    <script src="disable-submit.js"></script> <!-- Prevent multiple submissions -->
     <title>Admin Dashboard</title>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Admin Dashboard</h1>
+
+        <!-- Feedback Section -->
+        <?php
+        if (isset($_SESSION['message'])) {
+            echo "<div class='alert alert-{$_SESSION['message_type']}'>{$_SESSION['message']}</div>";
+            unset($_SESSION['message']);
+            unset($_SESSION['message_type']);
+        }
+        ?>
 
         <!-- Manage Users Section -->
         <div class="mb-5">
@@ -71,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </select>
                 <button type="submit" name="addUser" class="btn btn-primary">Add User</button>
             </form>
-
+            
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -109,6 +148,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </tbody>
             </table>
         </div>
+
+        <!-- Generate Analytics Section -->
+        <div class="mb-5">
+            <h2>Generate Analytics</h2>
+            <form method="POST" action="generate_analytics.php">
+        <button type="submit" name="generateAnalytics" class="btn btn-success">Generate Analytics</button>
+        </form>
+         </div>
+
 
         <!-- Manage Reports Section -->
         <div class="mb-5">
@@ -155,23 +203,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php
                     $reports = getAllReports();
                     foreach ($reports as $report) {
-                        $status = getStatusById($report['statusID']);
+                        $statusID = isset($report['statusID']) ? $report['statusID'] : null;
                         echo "<tr>
                                 <td>{$report['reportID']}</td>
                                 <td>{$report['description']}</td>
                                 <td>{$report['location']}</td>
                                 <td>{$report['submissionDate']}</td>
-                                <td>{$status['statusName']}</td>
+                                <td>{$statusID}</td>
                                 <td>
                                     <form action='' method='POST' style='display:inline;'>
                                         <button type='submit' name='deleteReport' value='{$report['reportID']}' class='btn btn-danger btn-sm'>Delete</button>
                                     </form>
                                     <form action='' method='POST' style='display:inline;'>
                                         <select name='newStatusID' class='form-control-sm'>
-                                            <option value='1' " . ($report['statusID'] == 1 ? 'selected' : '') . ">Pending</option>
-                                            <option value='2' " . ($report['statusID'] == 2 ? 'selected' : '') . ">In Progress</option>
-                                            <option value='3' " . ($report['statusID'] == 3 ? 'selected' : '') . ">Completed</option>
-                                            <option value='4' " . ($report['statusID'] == 4 ? 'selected' : '') . ">Cancelled</option>
+                                            <option value='1' " . ($statusID == 1 ? 'selected' : '') . ">Pending</option>
+                                            <option value='2' " . ($statusID == 2 ? 'selected' : '') . ">In Progress</option>
+                                            <option value='3' " . ($statusID == 3 ? 'selected' : '') . ">Completed</option>
+                                            <option value='4' " . ($statusID == 4 ? 'selected' : '') . ">Cancelled</option>
                                         </select>
                                         <button type='submit' name='updateReportStatus' value='{$report['reportID']}' class='btn btn-warning btn-sm'>Update Status</button>
                                     </form>
@@ -185,4 +233,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </body>
 </html>
-

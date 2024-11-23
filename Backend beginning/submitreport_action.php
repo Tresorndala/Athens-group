@@ -61,12 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Execute the query and check for success
     if ($stmt->execute()) {
-        // Respond with success and the unique Report ID
+        // Generate the tracking link
+        $trackLink = "progress.php?reportId=" . urlencode($reportID); // Generate a safe URL with reportID
+
+        // Respond with success and the unique Report ID along with the tracking link
         echo json_encode([
             'success' => true, 
-            'message' => 'Report submitted successfully.', 
+            'message' => 'Report submitted successfully.',
             'reportID' => $reportID,
-            'instructions' => 'You can track your report using this ID.'
+            'instructions' => 'You can track your report using this ID here: ' . $trackLink
         ]);
         exit;
     } else {
@@ -75,3 +78,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
