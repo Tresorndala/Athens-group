@@ -3,7 +3,7 @@ session_start();
 include "Functions_users_reports.php"; // Include the functions file
 include "core.php"; // Include the login check function (isLogin)
 isLogin(); // Check if the user is logged in
-
+isAdmin();
 // Handle form submissions for adding, updating, and deleting
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
 
             if ($userID && $maintenanceTypeID && $statusID && $description && $location) {
-                addReport($userID, $maintenanceTypeID, $statusID, $description, $location);
-                $_SESSION['message'] = "Report added successfully.";
+                $reportID = addReport($userID, $maintenanceTypeID, $statusID, $description, $location);
+                $_SESSION['message'] = "Report added successfully. Report ID: {$reportID}";
                 $_SESSION['message_type'] = "success";
             } else {
                 throw new Exception("Invalid report data provided.");
@@ -87,6 +87,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Admin Dashboard</h1>
+        <div class="text-end">
+    <form action="logout.php" method="POST">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</div>
 
         <!-- Feedback Section -->
         <?php

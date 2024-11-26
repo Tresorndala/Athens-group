@@ -1,102 +1,127 @@
 <?php
-include 'config.php';  // Include the database connection
+include "config.php";  // Include the database connection
 #include "mail_config.php";  // Include the mail configuration (if using PHPMailer)
 
-// Get all users
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Function to get all users
 function getAllUsers() {
     global $conn;
-    $result = $conn->query("SELECT * FROM users");
+    $sql = "SELECT userID, userName, userEmail, userRole FROM User";
+    $result = $conn->query($sql);
     $users = [];
-
-    if ($result) {
+    if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $users[] = $row;
         }
     }
-
     return $users;
 }
 
-// Add a new user
+// Function to add a user
 function addUser($userName, $userEmail, $userPassword, $userRole) {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO users (userName, userEmail, userPassword, userRole) VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO User (userName, userEmail, userpassword, userRole) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ssss", $userName, $userEmail, $userPassword, $userRole);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error adding user: " . $stmt->error);
-    }
-
+    $stmt->execute();
     $stmt->close();
 }
 
-// Delete a user
-function deleteUser($userID) {
+// Function to delete a user
+function deleteUser($userId) {
     global $conn;
-    $stmt = $conn->prepare("DELETE FROM users WHERE userID = ?");
-    $stmt->bind_param("i", $userID);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error deleting user: " . $stmt->error);
-    }
-
+    $stmt = $conn->prepare("DELETE FROM User WHERE userID = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
     $stmt->close();
 }
 
-// Update user role
-function updateUserRole($userID, $newRole) {
+// Function to update a user's role
+function updateUserRole($userId, $newRole) {
     global $conn;
-    $stmt = $conn->prepare("UPDATE users SET userRole = ? WHERE userID = ?");
-    $stmt->bind_param("si", $newRole, $userID);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error updating user role: " . $stmt->error);
-    }
-
+    $stmt = $conn->prepare("UPDATE User SET userRole = ? WHERE userID = ?");
+    $stmt->bind_param("si", $newRole, $userId);
+    $stmt->execute();
     $stmt->close();
 }
+// Include necessary files (Assuming you have a file to handle DB connection)
+ // For checking login or other functionality
 
-// Add a new report
+// Check if user is logged in (example); // Make sure the user is logged in before performing any actions
+
+// Function to get all reports
+function getAllReports() {
+    global $conn;
+
+    $sql = "SELECT 
+                r.reportID, 
+                u.userName, 
+                u.userEmail, 
+                m.typeName AS maintenanceType, 
+                s.statusName AS statusName, 
+                r.description, 
+                r.location, 
+                r.submissionDate, 
+                r.completionDate
+            FROM report r
+            LEFT JOIN User u ON r.userID = u.userID
+            LEFT JOIN MaintenanceType m ON r.maintenanceTypeID = m.maintenanceTypeID
+            LEFT JOIN Status s ON r.statusID = s.statusID";
+
+    $result = $conn->query($sql);
+    $reports = [];
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $reports[] = $row;
+        }
+    }
+
+    return $reports;
+}
+
+// Function to add a report
 function addReport($userID, $maintenanceTypeID, $statusID, $description, $location) {
     global $conn;
-    $stmt = $conn->prepare("INSERT INTO report (userID, maintenanceTypeID, statusID, description, location) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("iisss", $userID, $maintenanceTypeID, $statusID, $description, $location);
 
-    if (!$stmt->execute()) {
-        throw new Exception("Error adding report: " . $stmt->error);
-    }
+    $reportID = uniqid('report_');  // Generate unique ID for the report
+    $stmt = $conn->prepare("INSERT INTO report 
+                            (reportID, userID, maintenanceTypeID, statusID, description, location, submissionDate) 
+                            VALUES (?, ?, ?, ?, ?, ?, NOW())");
 
+    $stmt->bind_param("siiiss", $reportID, $userID, $maintenanceTypeID, $statusID, $description, $location);
+    $stmt->execute();
     $stmt->close();
+
+    return $reportID;
 }
 
-// Delete a report
+// Function to delete a report
 function deleteReport($reportID) {
     global $conn;
+
     $stmt = $conn->prepare("DELETE FROM report WHERE reportID = ?");
     $stmt->bind_param("s", $reportID);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error deleting report: " . $stmt->error);
-    }
-
+    $stmt->execute();
     $stmt->close();
 }
 
-// Update report status and handle email notification if status changes to "Completed"
+// Function to update report status
 function updateReportStatus($reportID, $newStatusID) {
     global $conn;
+
+    // Update the status in the report table
     $stmt = $conn->prepare("UPDATE report SET statusID = ? WHERE reportID = ?");
     $stmt->bind_param("is", $newStatusID, $reportID);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Error updating report status: " . $stmt->error);
-    }
-
+    $stmt->execute();
     $stmt->close();
 
     // If status changes to "Completed" (ID = 3), send an email notification
     if ($newStatusID == 3) {
-        $stmt = $conn->prepare("SELECT u.userEmail, u.userName FROM report r JOIN user u ON r.userID = u.userID WHERE r.reportID = ?");
+        $stmt = $conn->prepare("SELECT u.userEmail, u.userName FROM report r JOIN User u ON r.userID = u.userID WHERE r.reportID = ?");
         $stmt->bind_param("s", $reportID);
         $stmt->execute();
         $stmt->bind_result($userEmail, $userName);
@@ -109,19 +134,19 @@ function updateReportStatus($reportID, $newStatusID) {
     }
 }
 
-// Get all reports
-function getAllReports() {
+// Function to get the status name by ID
+function getStatusById($statusID) {
     global $conn;
-    $result = $conn->query("SELECT * FROM report");
-    $reports = [];
-
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $reports[] = $row;
-        }
+    $stmt = $conn->prepare("SELECT statusName FROM Status WHERE statusID = ?");
+    $stmt->bind_param("i", $statusID);
+    $stmt->execute();
+    $stmt->bind_result($statusName);
+    $status = null;
+    if ($stmt->fetch()) {
+        $status = $statusName;
     }
-
-    return $reports;
+    $stmt->close();
+    return $status;
 }
 
 // Function to send email when the report status is completed
@@ -144,23 +169,21 @@ function sendCompletionEmail($userEmail, $userName, $reportID) {
     mail($userEmail, $subject, $message, "Content-type:text/html;charset=UTF-8");
 }
 
-// Function to get the status name by ID
-function getStatusById($statusID) {
-    global $conn;
-    $stmt = $conn->prepare("SELECT statusName FROM status WHERE statusID = ?");
-    $stmt->bind_param("i", $statusID);
-    $stmt->execute();
-    $stmt->bind_result($statusName);
-    $status = null;
+// Example usage (uncomment to test functions):
 
-    if ($stmt->fetch()) {
-        $status = $statusName;
-    }
+// Add a new report
+// $newReportID = addReport(1, 2, 1, "Broken AC", "Room 101");
+// echo "New report added: " . $newReportID;
 
-    $stmt->close();
-    return $status;
-}
+// Delete a report by reportID
+// deleteReport('report_67408a278e4d9');
 
+// Update the status of a report
+// updateReportStatus('report_67408a278e4d9', 3);
+
+// Get all reports
+// $allReports = getAllReports();
+// print_r($allReports);
 // Function to get total reports
 function getTotalReports($conn) {
     $query = "SELECT COUNT(*) AS total FROM report"; // Count all reports
@@ -209,3 +232,5 @@ function getInProgressReports($conn) {
     return 0; // Return 0 if query fails
 }
 ?>
+
+
